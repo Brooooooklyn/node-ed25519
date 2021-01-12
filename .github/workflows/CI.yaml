@@ -40,11 +40,6 @@ jobs:
           profile: minimal
           override: true
 
-      - name: Generate Cargo.lock
-        uses: actions-rs/cargo@v1
-        with:
-          command: generate-lockfile
-
       - name: Cache cargo registry
         uses: actions/cache@v1
         with:
@@ -108,11 +103,6 @@ jobs:
           docker pull docker.pkg.github.com/napi-rs/napi-rs/rust-nodejs-alpine:lts
           docker tag docker.pkg.github.com/napi-rs/napi-rs/rust-nodejs-alpine:lts builder
 
-      - name: Generate Cargo.lock
-        uses: actions-rs/cargo@v1
-        with:
-          command: generate-lockfile
-
       - name: Cache cargo registry
         uses: actions/cache@v1
         with:
@@ -164,11 +154,6 @@ jobs:
           toolchain: nightly
           profile: minimal
           override: true
-
-      - name: Generate Cargo.lock
-        uses: actions-rs/cargo@v1
-        with:
-          command: generate-lockfile
 
       - name: Cache cargo registry
         uses: actions/cache@v1
@@ -233,11 +218,6 @@ jobs:
       - name: Install aarch64 toolchain
         run: rustup target add aarch64-unknown-linux-gnu
 
-      - name: Generate Cargo.lock
-        uses: actions-rs/cargo@v1
-        with:
-          command: generate-lockfile
-
       - name: Cache cargo registry
         uses: actions/cache@v1
         with:
@@ -296,11 +276,6 @@ jobs:
       - name: Install aarch64 toolchain
         run: rustup target add aarch64-apple-darwin
 
-      - name: Generate Cargo.lock
-        uses: actions-rs/cargo@v1
-        with:
-          command: generate-lockfile
-
       - name: Cache cargo registry
         uses: actions/cache@v1
         with:
@@ -344,11 +319,6 @@ jobs:
 
       - name: Install aarch64 toolchain
         run: rustup target add aarch64-linux-android
-
-      - name: Generate Cargo.lock
-        uses: actions-rs/cargo@v1
-        with:
-          command: generate-lockfile
 
       - name: Cache cargo registry
         uses: actions/cache@v1
