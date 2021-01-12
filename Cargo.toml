@@ -11,15 +11,10 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ed25519 = "1.0"
+ed25519-dalek = "1.0"
 napi = "1"
 napi-derive = "1"
 rand = "0.7"
-
-[target.'cfg(any(target = "x86_64-pc-windows-gnu", target = "x86_64-unknown-linux-gnu", target = "x86_64-apple-darwin"))'.dependencies]
-ed25519-dalek = {version = "1.0", features = ["simd_backend"]}
-
-[target.'cfg(not(any(target = "x86_64-pc-windows-gnu", target = "x86_64-unknown-linux-gnu", target = "x86_64-apple-darwin")))'.dependencies]
-ed25519-dalek = "1.0"
 
 [target.'cfg(all(unix, not(target_env = "musl"), not(target_arch = "aarch64")))'.dependencies]
 jemallocator = {version = "0.3", features = ["disable_initial_exec_tls"]}

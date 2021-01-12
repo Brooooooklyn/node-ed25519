@@ -46,21 +46,6 @@ async function run() {
   )
 
   await b.suite(
-    'sign',
-
-    b.add('napi', () => {
-      sign(NapiKeyPair.privateKey, message)
-    }),
-
-    b.add('nan', () => {
-      calculateSignature(NanKeyPair.privKey, message)
-    }),
-
-    b.cycle(),
-    b.complete(),
-  )
-
-  await b.suite(
     'verify',
 
     b.add('napi', () => {
