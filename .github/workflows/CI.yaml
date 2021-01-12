@@ -2,7 +2,7 @@ name: CI
 
 env:
   DEBUG: 'napi:*'
-  APP_NAME: 'package-template'
+  APP_NAME: 'ed25519'
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup node
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v2
         with:
           node-version: 14
           check-latest: true
@@ -36,7 +36,7 @@ jobs:
       - name: Install
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
           profile: minimal
           override: true
 
@@ -161,7 +161,7 @@ jobs:
       - name: Install
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
           profile: minimal
           override: true
 
@@ -218,7 +218,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup node
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v2
         with:
           node-version: 14
           check-latest: true
@@ -226,7 +226,7 @@ jobs:
       - name: Install
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
           profile: minimal
           override: true
 
@@ -281,7 +281,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup node
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v2
         with:
           node-version: 14
           check-latest: true
@@ -398,7 +398,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup node
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
           check-latest: true
@@ -477,7 +477,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup node
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
           check-latest: true
@@ -543,7 +543,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup node
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v2
         with:
           node-version: 14
           check-latest: true

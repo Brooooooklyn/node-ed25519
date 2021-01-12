@@ -1,3 +1,6 @@
-export const sync: (input: number) => number
-// sleep [duration] ms, return Promise which resolved 2 * duration
-export const sleep: (duration: number) => Promise<number>
+export function generateKeyPair(): {
+  publicKey: Buffer
+  privateKey: Buffer
+}
+export function sign(privateKey: Buffer, message: Buffer): Buffer
+export function verify(publicKey: Buffer, message: Buffer, signature: Buffer): boolean

@@ -1,21 +1,74 @@
+import { randomBytes } from 'crypto'
+
 import b from 'benny'
 
-import { sync } from '../index'
+import { sign, generateKeyPair as generateKeyPairNapi, verify } from '../index'
 
-function add(a: number) {
-  return a + 100
-}
+const { generateKeyPair, calculateSignature, verifySignature } = require('curve25519-n')
+
+const message = Buffer.from('hello world! 👀')
+
+const NanKeyPair = generateKeyPair(randomBytes(32))
+const NapiKeyPair = generateKeyPairNapi()
+
+const NapiSignature = sign(NapiKeyPair.privateKey, message)
+const NanSignature = calculateSignature(NanKeyPair.privKey, message)
 
 async function run() {
   await b.suite(
-    'Add 100',
+    'generateKeyPair',
 
-    b.add('Native a + 100', () => {
-      sync(10)
+    b.add('napi', () => {
+      generateKeyPairNapi()
     }),
 
-    b.add('JavaScript a + 100', () => {
-      add(10)
+    b.add('nan', () => {
+      generateKeyPair(randomBytes(32))
+    }),
+
+    b.cycle(),
+    b.complete(),
+  )
+
+  await b.suite(
+    'sign',
+
+    b.add('napi', () => {
+      sign(NapiKeyPair.privateKey, message)
+    }),
+
+    b.add('nan', () => {
+      calculateSignature(NanKeyPair.privKey, message)
+    }),
+
+    b.cycle(),
+    b.complete(),
+  )
+
+  await b.suite(
+    'sign',
+
+    b.add('napi', () => {
+      sign(NapiKeyPair.privateKey, message)
+    }),
+
+    b.add('nan', () => {
+      calculateSignature(NanKeyPair.privKey, message)
+    }),
+
+    b.cycle(),
+    b.complete(),
+  )
+
+  await b.suite(
+    'verify',
+
+    b.add('napi', () => {
+      verify(NapiKeyPair.publicKey, message, NapiSignature)
+    }),
+
+    b.add('nan', () => {
+      verifySignature(NanKeyPair.pubKey, message, NanSignature)
     }),
 
     b.cycle(),
