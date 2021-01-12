@@ -27,5 +27,5 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "repository": "git@github.com:napi-rs/ed25519.git"
+  "repository": "https://github.com/Brooooooklyn/node-ed25519"
 }
