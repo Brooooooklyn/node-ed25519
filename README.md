@@ -19,10 +19,10 @@ Running "generateKeyPair" suite...
 Progress: 100%
 
   napi:
-    38 490 ops/s, ±2.31%   | fastest
+    38 457 ops/s, ±2.15%   | fastest
 
   nan:
-    5 284 ops/s, ±1.97%    | slowest, 86.27% slower
+    5 263 ops/s, ±1.53%    | slowest, 86.31% slower
 
 Finished 2 cases!
   Fastest: napi
@@ -31,22 +31,10 @@ Running "sign" suite...
 Progress: 100%
 
   napi:
-    22 279 ops/s, ±1.48%   | fastest
+    22 100 ops/s, ±1.39%   | fastest
 
   nan:
-    13 300 ops/s, ±1.10%   | slowest, 40.3% slower
-
-Finished 2 cases!
-  Fastest: napi
-  Slowest: nan
-Running "sign" suite...
-Progress: 100%
-
-  napi:
-    22 698 ops/s, ±0.45%   | fastest
-
-  nan:
-    13 408 ops/s, ±0.44%   | slowest, 40.93% slower
+    13 317 ops/s, ±0.57%   | slowest, 39.74% slower
 
 Finished 2 cases!
   Fastest: napi
@@ -55,15 +43,15 @@ Running "verify" suite...
 Progress: 100%
 
   napi:
-    16 373 ops/s, ±0.39%   | fastest
+    16 663 ops/s, ±0.67%   | fastest
 
   nan:
-    8 052 ops/s, ±0.42%    | slowest, 50.82% slower
+    7 982 ops/s, ±2.61%    | slowest, 52.1% slower
 
 Finished 2 cases!
   Fastest: napi
   Slowest: nan
-Done in 44.19s.
+Done in 33.10s.
 ```
 
 ## Support matrix
@@ -77,3 +65,16 @@ Done in 44.19s.
 | Linux arm gnu   | ✓      | ✓      | ✓      | ✓      |
 | Linux arm64 gnu | ✓      | ✓      | ✓      | ✓      |
 | Android arm64   | ✓      | ✓      | ✓      | ✓      |
+
+## API
+
+```typescript
+export function generateKeyPair(): {
+  publicKey: Buffer
+  privateKey: Buffer
+}
+
+export function sign(privateKey: Buffer, message: Buffer): Buffer
+
+export function verify(publicKey: Buffer, message: Buffer, signature: Buffer): boolean
+```

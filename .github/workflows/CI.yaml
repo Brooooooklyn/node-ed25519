@@ -36,7 +36,7 @@ jobs:
       - name: Install
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: stable
           profile: minimal
           override: true
 
@@ -62,11 +62,6 @@ jobs:
         run: yarn install --frozen-lockfile --registry https://registry.npmjs.org --network-timeout 300000
 
       - name: 'Build'
-        if: matrix.os != 'macos-latest'
-        run: yarn build
-
-      - name: 'Build'
-        if: matrix.os == 'macos-latest'
         run: yarn build
         env:
           MACOSX_DEPLOYMENT_TARGET: '10.13'
@@ -151,7 +146,7 @@ jobs:
       - name: Install
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: stable
           profile: minimal
           override: true
 
@@ -211,7 +206,7 @@ jobs:
       - name: Install
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: stable
           profile: minimal
           override: true
 
@@ -269,7 +264,7 @@ jobs:
       - name: Install
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: stable
           profile: minimal
           override: true
 
@@ -479,7 +474,7 @@ jobs:
               apt-get install -y ca-certificates gnupg2 curl && \
               curl -sL https://deb.nodesource.com/setup_${{ matrix.node }}.x | bash - && \
               apt-get install -y nodejs && \
-              node ./simple-test.js
+              npm test
             "
 
   dependabot:
