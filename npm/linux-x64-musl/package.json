@@ -1,10 +1,16 @@
 {
   "name": "@napi-rs/ed25519-linux-x64-musl",
-  "version": "1.0.1",
-  "os": ["linux"],
-  "cpu": ["x64"],
+  "version": "1.0.2",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
   "main": "ed25519.linux-x64-musl.node",
-  "files": ["ed25519.linux-x64-musl.node"],
+  "files": [
+    "ed25519.linux-x64-musl.node"
+  ],
   "description": "ed25519 key generation, signing, and verification.",
   "keywords": [
     "napi-rs",

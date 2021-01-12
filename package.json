@@ -1,6 +1,6 @@
 {
   "name": "@napi-rs/ed25519",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "ed25519 key generation, signing, and verification.",
   "main": "index.js",
   "repository": "https://github.com/Brooooooklyn/node-ed25519",
@@ -18,7 +18,10 @@
     "ssh",
     "hash"
   ],
-  "files": ["index.d.ts", "index.js"],
+  "files": [
+    "index.d.ts",
+    "index.js"
+  ],
   "napi": {
     "name": "ed25519",
     "triples": {
@@ -79,14 +82,27 @@
     "@node-rs/helper": "^1.0.0"
   },
   "lint-staged": {
-    "*.@(js|ts|tsx)": ["prettier --write", "eslint -c .eslintrc.yml --fix"],
-    "*.@(yml|yaml)": ["prettier --parser yaml --write"],
-    "*.md": ["prettier --parser markdown --write"],
-    "*.json": ["prettier --parser json --write"]
+    "*.@(js|ts|tsx)": [
+      "prettier --write",
+      "eslint -c .eslintrc.yml --fix"
+    ],
+    "*.@(yml|yaml)": [
+      "prettier --parser yaml --write"
+    ],
+    "*.md": [
+      "prettier --parser markdown --write"
+    ],
+    "*.json": [
+      "prettier --parser json --write"
+    ]
   },
   "ava": {
-    "require": ["ts-node/register/transpile-only"],
-    "extensions": ["ts"],
+    "require": [
+      "ts-node/register/transpile-only"
+    ],
+    "extensions": [
+      "ts"
+    ],
     "environmentVariables": {
       "TS_NODE_PROJECT": "./tsconfig.json"
     }

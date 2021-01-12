@@ -1,10 +1,16 @@
 {
   "name": "@napi-rs/ed25519-win32-x64-msvc",
-  "version": "1.0.1",
-  "os": ["win32"],
-  "cpu": ["x64"],
+  "version": "1.0.2",
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
   "main": "ed25519.win32-x64-msvc.node",
-  "files": ["ed25519.win32-x64-msvc.node"],
+  "files": [
+    "ed25519.win32-x64-msvc.node"
+  ],
   "description": "ed25519 key generation, signing, and verification.",
   "keywords": [
     "napi-rs",
