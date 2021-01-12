@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "ed25519 key generation, signing, and verification.",
   "main": "index.js",
-  "repository": "git@github.com:napi-rs/ed25519.git",
+  "repository": "https://github.com/Brooooooklyn/node-ed25519",
   "license": "MIT",
   "keywords": [
     "napi-rs",
