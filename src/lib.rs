@@ -3,9 +3,12 @@
 #[macro_use]
 extern crate napi_derive;
 
-use std::convert::TryInto;
-
-use napi::{CallContext, Env, JsNumber, JsObject, Result, Task};
+use ed25519::signature::{Signature as SignatureTrait, Signer, Verifier};
+use ed25519_dalek::{Keypair, PublicKey, SecretKey, Signature};
+use napi::{
+  CallContext, ContextlessResult, Env, Error, JsBoolean, JsBuffer, JsObject, Result, Status,
+};
+use rand::rngs::OsRng;
 
 #[cfg(all(unix, not(target_env = "musl"), not(target_arch = "aarch64")))]
 #[global_allocator]
@@ -15,43 +18,62 @@ static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
-struct AsyncTask(u32);
-
-impl Task for AsyncTask {
-  type Output = u32;
-  type JsValue = JsNumber;
-
-  fn compute(&mut self) -> Result<Self::Output> {
-    use std::thread::sleep;
-    use std::time::Duration;
-    sleep(Duration::from_millis(self.0 as u64));
-    Ok(self.0 * 2)
-  }
-
-  fn resolve(self, env: Env, output: Self::Output) -> Result<Self::JsValue> {
-    env.create_uint32(output)
-  }
-}
-
 #[module_exports]
 fn init(mut exports: JsObject) -> Result<()> {
-  exports.create_named_method("sync", sync_fn)?;
-
-  exports.create_named_method("sleep", sleep)?;
+  exports.create_named_method("generateKeyPair", generate_key_pair)?;
+  exports.create_named_method("sign", sign)?;
+  exports.create_named_method("verify", verify)?;
   Ok(())
 }
 
-#[js_function(1)]
-fn sync_fn(ctx: CallContext) -> Result<JsNumber> {
-  let argument: u32 = ctx.get::<JsNumber>(0)?.try_into()?;
+#[contextless_function]
+fn generate_key_pair(env: Env) -> ContextlessResult<JsObject> {
+  let mut csprng = OsRng {};
 
-  ctx.env.create_uint32(argument + 100)
+  let mut result = env.create_object()?;
+  let keypair = Keypair::generate(&mut csprng);
+  let secret = env
+    .create_buffer_with_data(keypair.secret.as_ref().to_owned())?
+    .into_raw();
+  let public = env
+    .create_buffer_with_data(keypair.public.as_ref().to_owned())?
+    .into_raw();
+  result.set_named_property("privateKey", secret)?;
+  result.set_named_property("publicKey", public)?;
+  Ok(Some(result))
 }
 
-#[js_function(1)]
-fn sleep(ctx: CallContext) -> Result<JsObject> {
-  let argument: u32 = ctx.get::<JsNumber>(0)?.try_into()?;
-  let task = AsyncTask(argument);
-  let async_task = ctx.env.spawn(task)?;
-  Ok(async_task.promise_object())
+#[js_function(2)]
+fn sign(ctx: CallContext) -> Result<JsBuffer> {
+  let private_key = ctx.get::<JsBuffer>(0)?.into_value()?;
+  let message = ctx.get::<JsBuffer>(1)?.into_value()?;
+
+  let secret_key = SecretKey::from_bytes(&private_key)
+    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid privateKey {}", e)))?;
+  let public_key: PublicKey = (&secret_key).into();
+  let key_pair = Keypair {
+    secret: secret_key,
+    public: public_key,
+  };
+  let signature: Signature = key_pair.sign(&message);
+  ctx
+    .env
+    .create_buffer_with_data(signature.to_bytes().to_vec())
+    .map(|b| b.into_raw())
+}
+
+#[js_function(3)]
+fn verify(ctx: CallContext) -> Result<JsBoolean> {
+  let public_key = ctx.get::<JsBuffer>(0)?.into_value()?;
+  let message = ctx.get::<JsBuffer>(1)?.into_value()?;
+  let signature_buffer = ctx.get::<JsBuffer>(2)?.into_value()?;
+
+  let signature = Signature::from_bytes(&signature_buffer)
+    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid signature {}", e)))?;
+  let pub_key = PublicKey::from_bytes(&public_key)
+    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid public key {}", e)))?;
+
+  ctx
+    .env
+    .get_boolean(pub_key.verify(&message, &signature).is_ok())
 }
