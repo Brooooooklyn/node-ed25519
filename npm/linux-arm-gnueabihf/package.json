@@ -1,6 +1,6 @@
 {
   "name": "@napi-rs/ed25519-linux-arm-gnueabihf",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "os": ["linux"],
   "cpu": ["arm"],
   "main": "ed25519.linux-arm-gnueabihf.node",
