@@ -21,6 +21,7 @@ static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 #[module_exports]
 fn init(mut exports: JsObject) -> Result<()> {
   exports.create_named_method("generateKeyPair", generate_key_pair)?;
+  exports.create_named_method("createKeyPair", create_key_pair)?;
   exports.create_named_method("sign", sign)?;
   exports.create_named_method("verify", verify)?;
   Ok(())
@@ -41,6 +42,31 @@ fn generate_key_pair(env: Env) -> ContextlessResult<JsObject> {
   result.set_named_property("privateKey", secret)?;
   result.set_named_property("publicKey", public)?;
   Ok(Some(result))
+}
+
+#[js_function(1)]
+fn create_key_pair(ctx: CallContext) -> Result<JsObject> {
+  let private_key = ctx.get::<JsBuffer>(0)?.into_value()?;
+
+  let mut result = ctx.env.create_object()?;
+  let secret_key = SecretKey::from_bytes(&private_key)
+    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid privateKey {}", e)))?;
+  let public_key: PublicKey = (&secret_key).into();
+  let mut pub_key = [0u8; 33];
+  let (left, right) = pub_key.split_at_mut(1);
+  left[0] = 5;
+  right.copy_from_slice(public_key.as_bytes());
+  let secret = ctx
+    .env
+    .create_buffer_with_data(secret_key.as_ref().to_owned())?
+    .into_raw();
+  let public = ctx
+    .env
+    .create_buffer_with_data(pub_key.to_vec())?
+    .into_raw();
+  result.set_named_property("privateKey", secret)?;
+  result.set_named_property("publicKey", public)?;
+  Ok(result)
 }
 
 #[js_function(2)]

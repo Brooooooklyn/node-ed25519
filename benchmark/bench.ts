@@ -1,5 +1,3 @@
-import { randomBytes } from 'crypto'
-
 import b from 'benny'
 
 import { sign, generateKeyPair as generateKeyPairNapi, verify } from '../index'
@@ -8,7 +6,7 @@ const { generateKeyPair, calculateSignature, verifySignature } = require('curve2
 
 const message = Buffer.from('hello world! 👀')
 
-const NanKeyPair = generateKeyPair(randomBytes(32))
+const NanKeyPair = generateKeyPair()
 const NapiKeyPair = generateKeyPairNapi()
 
 const NapiSignature = sign(NapiKeyPair.privateKey, message)
@@ -23,7 +21,7 @@ async function run() {
     }),
 
     b.add('nan', () => {
-      generateKeyPair(randomBytes(32))
+      generateKeyPair()
     }),
 
     b.cycle(),
