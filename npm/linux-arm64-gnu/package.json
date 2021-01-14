@@ -1,16 +1,10 @@
 {
   "name": "@napi-rs/ed25519-linux-arm64-gnu",
-  "version": "1.0.2",
-  "os": [
-    "linux"
-  ],
-  "cpu": [
-    "arm64"
-  ],
+  "version": "1.0.3",
+  "os": ["linux"],
+  "cpu": ["arm64"],
   "main": "ed25519.linux-arm64-gnu.node",
-  "files": [
-    "ed25519.linux-arm64-gnu.node"
-  ],
+  "files": ["ed25519.linux-arm64-gnu.node"],
   "description": "ed25519 key generation, signing, and verification.",
   "keywords": [
     "napi-rs",
