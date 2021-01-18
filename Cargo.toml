@@ -15,7 +15,7 @@ ed25519-dalek = {version = "1.0", features = ["legacy_compatibility"]}
 napi = "1"
 napi-derive = "1"
 rand = "0.7"
-rand_core = "0.5"
+rand_core = "0.6"
 
 [target.'cfg(all(unix, not(target_env = "musl"), not(target_arch = "aarch64")))'.dependencies]
 jemallocator = {version = "0.3", features = ["disable_initial_exec_tls"]}
