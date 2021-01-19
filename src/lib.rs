@@ -33,12 +33,14 @@ fn generate_key_pair(env: Env) -> ContextlessResult<JsObject> {
 
   let mut result = env.create_object()?;
   let keypair = Keypair::generate(&mut csprng);
+  let mut pub_key = [0u8; 33];
+  let (left, right) = pub_key.split_at_mut(1);
+  left[0] = 5;
+  right.copy_from_slice(keypair.public.as_bytes());
   let secret = env
     .create_buffer_with_data(keypair.secret.as_ref().to_owned())?
     .into_raw();
-  let public = env
-    .create_buffer_with_data(keypair.public.as_ref().to_owned())?
-    .into_raw();
+  let public = env.create_buffer_with_data(pub_key.to_vec())?.into_raw();
   result.set_named_property("privateKey", secret)?;
   result.set_named_property("publicKey", public)?;
   Ok(Some(result))
@@ -93,10 +95,17 @@ fn verify(ctx: CallContext) -> Result<JsBoolean> {
   let public_key = ctx.get::<JsBuffer>(0)?.into_value()?;
   let message = ctx.get::<JsBuffer>(1)?.into_value()?;
   let signature_buffer = ctx.get::<JsBuffer>(2)?.into_value()?;
+  let (left, right) = public_key.split_at(1);
+  if left[0] != 5u8 {
+    return Err(Error::new(
+      Status::InvalidArg,
+      format!("{} is not a valid version number", left[0]),
+    ));
+  }
 
   let signature = Signature::from_bytes(&signature_buffer)
     .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid signature {}", e)))?;
-  let pub_key = PublicKey::from_bytes(&public_key)
+  let pub_key = PublicKey::from_bytes(&right)
     .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid public key {}", e)))?;
 
   ctx

@@ -11,7 +11,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ed25519 = "1.0"
-ed25519-dalek = {version = "1.0", features = ["legacy_compatibility"]}
+ed25519-dalek = {version = "1.0"}
 napi = "1"
 napi-derive = "1"
 rand = "0.7"
