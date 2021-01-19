@@ -14,7 +14,7 @@ ed25519 = "1.0"
 ed25519-dalek = {version = "1.0"}
 napi = "1"
 napi-derive = "1"
-rand = "0.7"
+rand = "0.8"
 rand_core = "0.5"
 
 [target.'cfg(all(unix, not(target_env = "musl"), not(target_arch = "aarch64")))'.dependencies]
