@@ -3,12 +3,13 @@
 #[macro_use]
 extern crate napi_derive;
 
-use ed25519::signature::{Signature as SignatureTrait, Signer, Verifier};
-use ed25519_dalek::{Keypair, PublicKey, SecretKey, Signature};
 use napi::{
   CallContext, ContextlessResult, Env, Error, JsBoolean, JsBuffer, JsObject, Result, Status,
 };
-use rand::rngs::OsRng;
+use ring::{
+  rand,
+  signature::{self, KeyPair},
+};
 
 #[cfg(all(unix, not(target_env = "musl"), not(target_arch = "aarch64")))]
 #[global_allocator]
@@ -29,18 +30,18 @@ fn init(mut exports: JsObject) -> Result<()> {
 
 #[contextless_function]
 fn generate_key_pair(env: Env) -> ContextlessResult<JsObject> {
-  let mut csprng = OsRng {};
-
+  let rng = rand::SystemRandom::new();
+  let pkcs8_bytes = signature::Ed25519KeyPair::generate_pkcs8(&rng)
+    .map_err(|e| Error::new(Status::InvalidArg, format!("{}", e)))?;
+  let key_pair = signature::Ed25519KeyPair::from_pkcs8(pkcs8_bytes.as_ref())
+    .map_err(|e| Error::new(Status::InvalidArg, format!("{}", e)))?;
   let mut result = env.create_object()?;
-  let keypair = Keypair::generate(&mut csprng);
-  let mut pub_key = [0u8; 33];
-  let (left, right) = pub_key.split_at_mut(1);
-  left[0] = 5;
-  right.copy_from_slice(keypair.public.as_bytes());
   let secret = env
-    .create_buffer_with_data(keypair.secret.as_ref().to_owned())?
+    .create_buffer_with_data(pkcs8_bytes.as_ref().to_owned())?
     .into_raw();
-  let public = env.create_buffer_with_data(pub_key.to_vec())?.into_raw();
+  let public = env
+    .create_buffer_with_data(key_pair.public_key().as_ref().to_vec())?
+    .into_raw();
   result.set_named_property("privateKey", secret)?;
   result.set_named_property("publicKey", public)?;
   Ok(Some(result))
@@ -51,20 +52,15 @@ fn create_key_pair(ctx: CallContext) -> Result<JsObject> {
   let private_key = ctx.get::<JsBuffer>(0)?.into_value()?;
 
   let mut result = ctx.env.create_object()?;
-  let secret_key = SecretKey::from_bytes(&private_key)
+  let key_pair = signature::Ed25519KeyPair::from_pkcs8(&private_key)
     .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid privateKey {}", e)))?;
-  let public_key: PublicKey = (&secret_key).into();
-  let mut pub_key = [0u8; 33];
-  let (left, right) = pub_key.split_at_mut(1);
-  left[0] = 5;
-  right.copy_from_slice(public_key.as_bytes());
   let secret = ctx
     .env
-    .create_buffer_with_data(secret_key.as_ref().to_owned())?
+    .create_buffer_with_data(private_key.as_ref().to_owned())?
     .into_raw();
   let public = ctx
     .env
-    .create_buffer_with_data(pub_key.to_vec())?
+    .create_buffer_with_data(key_pair.public_key().as_ref().to_vec())?
     .into_raw();
   result.set_named_property("privateKey", secret)?;
   result.set_named_property("publicKey", public)?;
@@ -76,17 +72,12 @@ fn sign(ctx: CallContext) -> Result<JsBuffer> {
   let private_key = ctx.get::<JsBuffer>(0)?.into_value()?;
   let message = ctx.get::<JsBuffer>(1)?.into_value()?;
 
-  let secret_key = SecretKey::from_bytes(&private_key)
-    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid privateKey {}", e)))?;
-  let public_key: PublicKey = (&secret_key).into();
-  let key_pair = Keypair {
-    secret: secret_key,
-    public: public_key,
-  };
-  let signature: Signature = key_pair.sign(&message);
+  let key_pair = signature::Ed25519KeyPair::from_pkcs8(&private_key)
+    .map_err(|e| Error::new(Status::InvalidArg, format!("{}", e)))?;
+  let signature = key_pair.sign(&message);
   ctx
     .env
-    .create_buffer_with_data(signature.to_bytes().to_vec())
+    .create_buffer_with_data(signature.as_ref().to_vec())
     .map(|b| b.into_raw())
 }
 
@@ -95,20 +86,9 @@ fn verify(ctx: CallContext) -> Result<JsBoolean> {
   let public_key = ctx.get::<JsBuffer>(0)?.into_value()?;
   let message = ctx.get::<JsBuffer>(1)?.into_value()?;
   let signature_buffer = ctx.get::<JsBuffer>(2)?.into_value()?;
-  let (left, right) = public_key.split_at(1);
-  if left[0] != 5u8 {
-    return Err(Error::new(
-      Status::InvalidArg,
-      format!("{} is not a valid version number", left[0]),
-    ));
-  }
-
-  let signature = Signature::from_bytes(&signature_buffer)
-    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid signature {}", e)))?;
-  let pub_key = PublicKey::from_bytes(&right)
-    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid public key {}", e)))?;
+  let peer_public_key = signature::UnparsedPublicKey::new(&signature::ED25519, public_key);
 
   ctx
     .env
-    .get_boolean(pub_key.verify(&message, &signature).is_ok())
+    .get_boolean(peer_public_key.verify(&message, &signature_buffer).is_ok())
 }
