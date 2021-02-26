@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-18.04, macos-latest, windows-latest]
 
     name: stable - ${{ matrix.os }} - node@14
     runs-on: ${{ matrix.os }}
@@ -77,6 +77,76 @@ jobs:
           cargo install cargo-cache --no-default-features --features ci-autoclean
           cargo-cache
 
+  build-windows-i686:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    name: stable - windows-i686 - node@14
+    runs-on: windows-latest
+    env:
+      CARGO_PROFILE_RELEASE_CODEGEN_UNITS: 32
+      CARGO_PROFILE_RELEASE_LTO: 'false'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install node x86
+        run: |
+          choco install nodejs-lts --x86 -y --force
+          refreshenv
+      - name: Set 32bit NodeJS path
+        run: |
+          echo "C:\\Program Files (x86)\\nodejs" >> $GITHUB_PATH
+        shell: bash
+
+      - name: NodeJS arch
+        run: node -e "console.log(process.arch)"
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: npm-cache-windows-i686-node@lts-${{ hashFiles('yarn.lock') }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --registry https://registry.npmjs.org --network-timeout 300000
+
+      - name: Install
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - name: Install i686 toolchain
+        run: rustup target add i686-pc-windows-msvc
+
+      - name: Generate Cargo.lock
+        uses: actions-rs/cargo@v1
+        with:
+          command: generate-lockfile
+
+      - name: Cache cargo registry
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: stable-windows-i686-node@lts-cargo-registry-trimmed-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: stable-windows-i686-node@lts-cargo-index-trimmed-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cross build i686
+        run: yarn build --target i686-pc-windows-msvc
+
+      - name: Test binary
+        run: yarn test
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings-win32-i686
+          path: ${{ env.APP_NAME }}.*.node
+  
   build-linux-musl:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     name: stable - linux-musl - node@10
@@ -482,6 +552,7 @@ jobs:
       - test
       - test-musl
       - test-aarch64
+      - build-windows-i686
       - build-apple-silicon
       - build-linux-arm7
       - build-android-aarch64
@@ -502,6 +573,7 @@ jobs:
       - test-aarch64
       - build-apple-silicon
       - build-linux-arm7
+      - build-windows-i686
       - build-android-aarch64
 
     steps:
