@@ -98,10 +98,5 @@
     "singleQuote": true,
     "arrowParens": "always",
     "parser": "typescript"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }
