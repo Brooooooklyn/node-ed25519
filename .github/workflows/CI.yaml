@@ -477,22 +477,6 @@ jobs:
               npm test
             "
 
-  dependabot:
-    needs:
-      - test
-      - test-musl
-      - test-aarch64
-      - build-apple-silicon
-      - build-linux-arm7
-      - build-android-aarch64
-    runs-on: ubuntu-latest
-    steps:
-      - name: auto-merge
-        uses: ridedott/dependabot-auto-merge-action@master
-        with:
-          GITHUB_LOGIN: dependabot[bot]
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   publish:
     name: Publish
     runs-on: ubuntu-latest
