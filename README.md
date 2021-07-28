@@ -1,8 +1,10 @@
 # `@napi-rs/ed25519`
 
 ![https://github.com/Brooooooklyn/node-ed25519/actions](https://github.com/Brooooooklyn/node-ed25519/workflows/CI/badge.svg)
+[![install size](https://packagephobia.com/badge?p=@napi-rs/ed25519)](https://packagephobia.com/result?p=@napi-rs/ed25519)
+[![Downloads](https://img.shields.io/npm/dm/@napi-rs/ed25519.svg?sanitize=true)](https://npmcharts.com/compare/@napi-rs/ed25519?minimal=true)
 
-> [ed25519-dalek](https://github.com/dalek-cryptography/ed25519-dalek) binding for NodeJS.
+> [ed25519-dalek](https://github.com/dalek-cryptography/ed25519-dalek) binding for Node.js.
 
 ## Install this test package
 
@@ -56,15 +58,20 @@ Done in 33.10s.
 
 ## Support matrix
 
-|                 | node10 | node12 | node14 | node15 |
-| --------------- | ------ | ------ | ------ | ------ |
-| Windows x64     | ✓      | ✓      | ✓      | ✓      |
-| macOS x64/arm64 | ✓      | ✓      | ✓      | ✓      |
-| Linux x64 gnu   | ✓      | ✓      | ✓      | ✓      |
-| Linux x64 musl  | ✓      | ✓      | ✓      | ✓      |
-| Linux arm gnu   | ✓      | ✓      | ✓      | ✓      |
-| Linux arm64 gnu | ✓      | ✓      | ✓      | ✓      |
-| Android arm64   | ✓      | ✓      | ✓      | ✓      |
+|                  | node12 | node14 | node16 |
+| ---------------- | ------ | ------ | ------ |
+| Windows x64      | ✓      | ✓      | ✓      |
+| Windows x32      | ✓      | ✓      | ✓      |
+| Windows arm64    | ✓      | ✓      | ✓      |
+| macOS x64        | ✓      | ✓      | ✓      |
+| macOS arm64      | ✓      | ✓      | ✓      |
+| Linux x64 gnu    | ✓      | ✓      | ✓      |
+| Linux x64 musl   | ✓      | ✓      | ✓      |
+| Linux arm gnu    | ✓      | ✓      | ✓      |
+| Linux arm64 gnu  | ✓      | ✓      | ✓      |
+| Linux arm64 musl | ✓      | ✓      | ✓      |
+| Android arm64    | ✓      | ✓      | ✓      |
+| FreeBSD x64      | ✓      | ✓      | ✓      |
 
 ## API
 
