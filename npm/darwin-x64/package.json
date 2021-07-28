@@ -1,10 +1,16 @@
 {
   "name": "@napi-rs/ed25519-darwin-x64",
-  "version": "1.0.3",
-  "os": ["darwin"],
-  "cpu": ["x64"],
+  "version": "1.1.0",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "x64"
+  ],
   "main": "ed25519.darwin-x64.node",
-  "files": ["ed25519.darwin-x64.node"],
+  "files": [
+    "ed25519.darwin-x64.node"
+  ],
   "description": "ed25519 key generation, signing, and verification.",
   "keywords": [
     "napi-rs",
