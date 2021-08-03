@@ -106,7 +106,7 @@ fn verify(ctx: CallContext) -> Result<JsBoolean> {
 
   let signature = Signature::from_bytes(&signature_buffer)
     .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid signature {}", e)))?;
-  let pub_key = PublicKey::from_bytes(&right)
+  let pub_key = PublicKey::from_bytes(right)
     .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid public key {}", e)))?;
 
   ctx
