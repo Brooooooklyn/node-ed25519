@@ -12,7 +12,7 @@ crate-type = ["cdylib"]
 [dependencies]
 ed25519 = "1.1"
 ed25519-dalek = {version = "1.0"}
-napi = "1"
+napi = "2"
 napi-derive = "1"
 rand = "0.7"
 rand_core = "0.5"
