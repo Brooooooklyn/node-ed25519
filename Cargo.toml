@@ -1,7 +1,7 @@
 [package]
 authors = ["LongYinan <lynweklm@gmail.com>"]
 edition = "2021"
-name = "napi-ed25519"
+name    = "napi-ed25519"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -10,18 +10,23 @@ version = "0.1.0"
 crate-type = ["cdylib"]
 
 [dependencies]
-ed25519 = "1.1"
-ed25519-dalek = { version = "1" }
-napi = "2"
-napi-derive = "2"
-rand = "=0.7.3"
-rand_core = "=0.5.1"
+ed25519       = "2"
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+napi          = "2"
+napi-derive   = "2"
+rand          = "0.8"
+rand_core     = "0.6"
 
-[target.'cfg(all(any(windows, unix), not(target_env = "musl")))'.dependencies]
+[target.'cfg(not(linux))'.dependencies]
 mimalloc = { version = "0.1" }
+
+[target.'cfg(all(target_os = "linux", not(target_arch = "arm")))'.dependencies]
+mimalloc = { version = "0.1", features = ["local_dynamic_tls"] }
 
 [build-dependencies]
 napi-build = "2"
 
 [profile.release]
-lto = true
+codegen-units = 1
+lto           = true
+strip         = 'symbols'
