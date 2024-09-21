@@ -1,6 +1,6 @@
 {
   "name": "@napi-rs/ed25519",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "ed25519 key generation, signing, and verification.",
   "main": "index.js",
   "browser": "browser.js",
