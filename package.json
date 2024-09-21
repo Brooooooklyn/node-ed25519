@@ -1,6 +1,6 @@
 {
   "name": "@napi-rs/ed25519",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "ed25519 key generation, signing, and verification.",
   "main": "index.js",
   "browser": "browser.js",
@@ -23,7 +23,11 @@
     "ssh",
     "hash"
   ],
-  "files": ["index.d.ts", "index.js", "browser.js"],
+  "files": [
+    "index.d.ts",
+    "index.js",
+    "browser.js"
+  ],
   "napi": {
     "binaryName": "ed25519",
     "targets": [
@@ -91,11 +95,18 @@
     "typescript": "^5.6.2"
   },
   "lint-staged": {
-    "*.@(js|ts|tsx)": ["oxlint"],
-    "*.@(yml|yaml|md|js|ts|tsx)": ["prettier --write"]
+    "*.@(js|ts|tsx)": [
+      "oxlint"
+    ],
+    "*.@(yml|yaml|md|js|ts|tsx)": [
+      "prettier --write"
+    ]
   },
   "ava": {
-    "nodeArguments": ["--import", "@oxc-node/core/register"],
+    "nodeArguments": [
+      "--import",
+      "@oxc-node/core/register"
+    ],
     "extensions": {
       "ts": "module"
     },
