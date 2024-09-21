@@ -12,12 +12,12 @@ crate-type = ["cdylib"]
 [dependencies]
 ed25519       = "2"
 ed25519-dalek = { version = "2", features = ["rand_core"] }
-napi          = "2"
-napi-derive   = "2"
+napi          = { version = "3.0.0-alpha", default-features = false, features = ["napi3"]}
+napi-derive   = { version = "3.0.0-alpha" }
 rand          = "0.8"
 rand_core     = "0.6"
 
-[target.'cfg(not(linux))'.dependencies]
+[target.'cfg(all(not(linux), not(target_family = "wasm")))'.dependencies]
 mimalloc = { version = "0.1" }
 
 [target.'cfg(all(target_os = "linux", not(target_arch = "arm")))'.dependencies]

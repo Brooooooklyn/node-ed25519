@@ -6,7 +6,7 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use rand::rngs::OsRng;
 
-#[cfg(not(target_arch = "arm"))]
+#[cfg(all(not(target_arch = "arm"), not(target_family = "wasm")))]
 #[global_allocator]
 static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
