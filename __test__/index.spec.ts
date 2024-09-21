@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import { generateKeyPair as generateKeyPairNapi, sign, verify } from '../index'
+import { generateKeyPair as generateKeyPairNapi, sign, verify } from '../index.js'
 
 test('should be able to sign and verify', (t) => {
   const message = Buffer.from('hello world 👀')

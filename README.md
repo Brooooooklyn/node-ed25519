@@ -6,9 +6,7 @@
 
 > [ed25519-dalek](https://github.com/dalek-cryptography/ed25519-dalek) binding for Node.js.
 
-## Install this test package
-
-Comparison with [curve25519-n](https://github.com/scottnonnenberg-signal/node-curve25519.git)
+## Install
 
 ```
 yarn add @napi-rs/ed25519
@@ -16,72 +14,50 @@ yarn add @napi-rs/ed25519
 
 ## Performance
 
+Compare with [noble-ed25519](https://github.com/paulmillr/noble-ed25519/)
+
+### Generate KeyPair
+
 ```text
-Running "generateKeyPair" suite...
-Progress: 100%
-
-  napi:
-    38 457 ops/s, ±2.15%   | fastest
-
-  nan:
-    5 263 ops/s, ±1.53%    | slowest, 86.31% slower
-
-Finished 2 cases!
-  Fastest: napi
-  Slowest: nan
-Running "sign" suite...
-Progress: 100%
-
-  napi:
-    22 100 ops/s, ±1.39%   | fastest
-
-  nan:
-    13 317 ops/s, ±0.57%   | slowest, 39.74% slower
-
-Finished 2 cases!
-  Fastest: napi
-  Slowest: nan
-Running "verify" suite...
-Progress: 100%
-
-  napi:
-    16 663 ops/s, ±0.67%   | fastest
-
-  nan:
-    7 982 ops/s, ±2.61%    | slowest, 52.1% slower
-
-Finished 2 cases!
-  Fastest: napi
-  Slowest: nan
-Done in 33.10s.
+┌─────────┬────────────────────┬──────────┬────────────────────┬──────────┬─────────┐
+│ (index) │ Task Name          │ ops/sec  │ Average Time (ns)  │ Margin   │ Samples │
+├─────────┼────────────────────┼──────────┼────────────────────┼──────────┼─────────┤
+│ 0       │ '@napi-rs/ed25519' │ '84,313' │ 11860.560927010862 │ '±1.19%' │ 42157   │
+│ 1       │ '@noble/ed25519'   │ '7,735'  │ 129267.36039296696 │ '±0.67%' │ 3868    │
+└─────────┴────────────────────┴──────────┴────────────────────┴──────────┴─────────┘
 ```
 
-## Support matrix
+### Sign
 
-|                  | node12 | node14 | node16 |
-| ---------------- | ------ | ------ | ------ |
-| Windows x64      | ✓      | ✓      | ✓      |
-| Windows x32      | ✓      | ✓      | ✓      |
-| Windows arm64    | ✓      | ✓      | ✓      |
-| macOS x64        | ✓      | ✓      | ✓      |
-| macOS arm64      | ✓      | ✓      | ✓      |
-| Linux x64 gnu    | ✓      | ✓      | ✓      |
-| Linux x64 musl   | ✓      | ✓      | ✓      |
-| Linux arm gnu    | ✓      | ✓      | ✓      |
-| Linux arm64 gnu  | ✓      | ✓      | ✓      |
-| Linux arm64 musl | ✓      | ✓      | ✓      |
-| Android arm64    | ✓      | ✓      | ✓      |
-| FreeBSD x64      | ✓      | ✓      | ✓      |
+```text
+┌─────────┬────────────────────┬──────────┬────────────────────┬──────────┬─────────┐
+│ (index) │ Task Name          │ ops/sec  │ Average Time (ns)  │ Margin   │ Samples │
+├─────────┼────────────────────┼──────────┼────────────────────┼──────────┼─────────┤
+│ 0       │ '@napi-rs/ed25519' │ '48,326' │ 20692.732246316882 │ '±2.57%' │ 24164   │
+│ 1       │ '@noble/ed25519'   │ '4,115'  │ 243012.00291544604 │ '±0.52%' │ 2058    │
+└─────────┴────────────────────┴──────────┴────────────────────┴──────────┴─────────┘
+```
+
+### Verify
+
+```text
+┌─────────┬────────────────────┬──────────┬────────────────────┬──────────┬─────────┐
+│ (index) │ Task Name          │ ops/sec  │ Average Time (ns)  │ Margin   │ Samples │
+├─────────┼────────────────────┼──────────┼────────────────────┼──────────┼─────────┤
+│ 0       │ '@napi-rs/ed25519' │ '34,145' │ 29286.012651555568 │ '±0.13%' │ 17073   │
+│ 1       │ '@noble/ed25519'   │ '923'    │ 1083121.3181818079 │ '±0.36%' │ 462     │
+└─────────┴────────────────────┴──────────┴────────────────────┴──────────┴─────────┘
+```
 
 ## API
 
 ```typescript
 export function generateKeyPair(): {
-  publicKey: Buffer
-  privateKey: Buffer
+  publicKey: Uint8Array
+  privateKey: Uint8Array
 }
 
-export function sign(privateKey: Buffer, message: Buffer): Buffer
+export function sign(privateKey: Uint8Array, message: Uint8Array): Uint8Array
 
-export function verify(publicKey: Buffer, message: Buffer, signature: Buffer): boolean
+export function verify(publicKey: Uint8Array, message: Uint8Array, signature: Uint8Array): boolean
 ```
