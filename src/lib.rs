@@ -1,10 +1,11 @@
 #![deny(clippy::all)]
 
-use ed25519::signature::SignerMut;
-use ed25519_dalek::{Signature, SigningKey, VerifyingKey, PUBLIC_KEY_LENGTH, SECRET_KEY_LENGTH};
+use ed25519_dalek::{
+  Signature, Signer, SigningKey, VerifyingKey, PUBLIC_KEY_LENGTH, SECRET_KEY_LENGTH,
+};
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
-use rand::rngs::OsRng;
+use rand::{rngs::OsRng, TryRngCore};
 
 #[cfg(all(not(target_arch = "arm"), not(target_family = "wasm")))]
 #[global_allocator]
@@ -18,7 +19,7 @@ pub struct Ed25519Keypair {
 
 #[napi]
 pub fn generate_key_pair() -> Result<Ed25519Keypair> {
-  let mut csprng = OsRng;
+  let mut csprng = OsRng.unwrap_err();
 
   let keypair = SigningKey::generate(&mut csprng);
   let secret = keypair.as_bytes().to_vec().into();
@@ -59,7 +60,7 @@ pub fn sign(private_key: &[u8], message: &[u8]) -> Result<Uint8Array> {
   }
   let mut pk = [0; 32];
   pk.copy_from_slice(private_key);
-  let mut key_pair = SigningKey::from_bytes(&pk);
+  let key_pair = SigningKey::from_bytes(&pk);
   let signature = key_pair.sign(message);
   Ok(signature.to_bytes().to_vec().into())
 }
@@ -67,7 +68,7 @@ pub fn sign(private_key: &[u8], message: &[u8]) -> Result<Uint8Array> {
 #[napi]
 pub fn verify(public_key: &[u8], message: &[u8], signature_buffer: &[u8]) -> Result<bool> {
   let signature = Signature::from_slice(signature_buffer)
-    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid signature {}", e)))?;
+    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid signature {e}")))?;
   if public_key.len() != PUBLIC_KEY_LENGTH {
     return Err(Error::new(
       Status::InvalidArg,
@@ -77,7 +78,7 @@ pub fn verify(public_key: &[u8], message: &[u8], signature_buffer: &[u8]) -> Res
   let mut pk = [0; 32];
   pk.copy_from_slice(public_key);
   let pub_key = VerifyingKey::from_bytes(&pk)
-    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid public key {}", e)))?;
+    .map_err(|e| Error::new(Status::InvalidArg, format!("Invalid public key {e}")))?;
 
   Ok(pub_key.verify_strict(message, &signature).is_ok())
 }
