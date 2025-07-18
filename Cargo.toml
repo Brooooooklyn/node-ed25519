@@ -10,12 +10,11 @@ version = "0.1.0"
 crate-type = ["cdylib"]
 
 [dependencies]
-ed25519       = "2"
-ed25519-dalek = { version = "2", features = ["rand_core"] }
-napi          = { version = "3.0.0-alpha", default-features = false, features = ["napi3"]}
-napi-derive   = { version = "3.0.0-alpha" }
-rand          = "0.8"
-rand_core     = "0.6"
+ed25519-dalek = { version = "3.0.0-pre.0", features = ["rand_core"] }
+napi          = { version = "3.0.0", default-features = false, features = ["napi3"]}
+napi-derive   = { version = "3.0.0" }
+rand          = "0.9"
+rand_core     = "0.9"
 
 [target.'cfg(all(not(linux), not(target_family = "wasm")))'.dependencies]
 mimalloc = { version = "0.1" }
