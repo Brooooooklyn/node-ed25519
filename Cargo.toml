@@ -10,17 +10,10 @@ version = "0.1.0"
 crate-type = ["cdylib"]
 
 [dependencies]
-ed25519-dalek = { version = "3.0.0-pre.0", features = ["rand_core"] }
-napi          = { version = "3.0.0", default-features = false, features = ["napi3"]}
-napi-derive   = { version = "3.0.0" }
-rand          = "0.9"
-rand_core     = "0.9"
-
-[target.'cfg(all(not(linux), not(target_family = "wasm")))'.dependencies]
-mimalloc = { version = "0.1" }
-
-[target.'cfg(all(target_os = "linux", not(target_arch = "arm")))'.dependencies]
-mimalloc = { version = "0.1", features = ["local_dynamic_tls"] }
+ed25519-dalek = { version = "3.0.0-pre.6", features = ["rand_core"] }
+getrandom     = { version = "0.4", features = ["sys_rng"] }
+napi          = { version = "3", default-features = false, features = ["napi3"] }
+napi-derive   = { version = "3" }
 
 [build-dependencies]
 napi-build = "2"
@@ -28,4 +21,4 @@ napi-build = "2"
 [profile.release]
 codegen-units = 1
 lto           = true
-strip         = 'symbols'
+strip         = "symbols"

@@ -3,13 +3,9 @@
 use ed25519_dalek::{
   Signature, Signer, SigningKey, VerifyingKey, PUBLIC_KEY_LENGTH, SECRET_KEY_LENGTH,
 };
+use getrandom::{rand_core::UnwrapErr, SysRng};
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
-use rand::{rngs::OsRng, TryRngCore};
-
-#[cfg(all(not(target_arch = "arm"), not(target_family = "wasm")))]
-#[global_allocator]
-static ALLOC: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 #[napi(object)]
 pub struct Ed25519Keypair {
@@ -19,9 +15,7 @@ pub struct Ed25519Keypair {
 
 #[napi]
 pub fn generate_key_pair() -> Result<Ed25519Keypair> {
-  let mut csprng = OsRng.unwrap_err();
-
-  let keypair = SigningKey::generate(&mut csprng);
+  let keypair = SigningKey::generate(&mut UnwrapErr(SysRng));
   let secret = keypair.as_bytes().to_vec().into();
   let public = keypair.verifying_key().as_bytes().to_vec().into();
   Ok(Ed25519Keypair {
