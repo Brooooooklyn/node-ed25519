@@ -62,57 +62,59 @@
     "bench": "node --import @oxc-node/core/register benchmark/bench.ts",
     "build": "napi build --platform --release",
     "build:debug": "napi build --platform",
-    "format": "run-p format:md format:json format:yaml format:source format:rs",
-    "format:md": "prettier --parser markdown --write \"./**/*.md\"",
-    "format:json": "prettier --parser json --write \"./**/*.json\"",
+    "format": "run-p format:prettier format:rs format:toml",
     "format:rs": "cargo fmt",
-    "format:source": "prettier --config ./package.json --write \"./**/*.{js,ts}\"",
     "format:toml": "taplo format",
-    "format:yaml": "prettier --parser yaml --write \"./**/*.{yml,yaml}\"",
-    "lint": "oxlint",
+    "lint": "oxlint .",
     "prepublishOnly": "napi prepublish -t npm",
     "test": "ava",
-    "version": "napi version"
+    "version": "napi version",
+    "format:prettier": "prettier . -w",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "@napi-rs/cli": "^3.0.0",
-    "@napi-rs/wasm-runtime": "^1.0.0",
+    "@emnapi/core": "^1.5.0",
+    "@emnapi/runtime": "^1.5.0",
+    "@napi-rs/cli": "^3.2.0",
     "@noble/ed25519": "^2.3.0",
     "@noble/hashes": "^1.8.0",
-    "@oxc-node/core": "^0.0.29",
+    "@oxc-node/core": "^0.0.35",
     "@taplo/cli": "^0.7.0",
-    "@types/node": "^24.0.14",
+    "@tybys/wasm-util": "^0.10.0",
     "ava": "^6.4.1",
-    "chalk": "^5.4.1",
-    "emnapi": "^1.4.5",
+    "chalk": "^5.6.2",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
+    "lint-staged": "^16.1.6",
     "npm-run-all2": "^8.0.4",
-    "oxlint": "^1.7.0",
+    "oxlint": "^1.14.0",
     "prettier": "^3.6.2",
-    "tinybench": "^4.0.1",
-    "typescript": "^5.8.3"
+    "tinybench": "^6.0.0",
+    "typescript": "^5.9.2"
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [
-      "oxlint"
+      "oxlint --fix"
     ],
-    "*.@(yml|yaml|md|js|ts|tsx)": [
+    "*.@(js|ts|tsx|yml|yaml|md|json)": [
       "prettier --write"
+    ],
+    "*.toml": [
+      "taplo format"
     ]
   },
   "ava": {
-    "nodeArguments": [
-      "--import",
-      "@oxc-node/core/register"
-    ],
     "extensions": {
       "ts": "module"
     },
+    "timeout": "2m",
+    "workerThreads": false,
     "environmentVariables": {
-      "TS_NODE_PROJECT": "./tsconfig.json"
+      "OXC_TSCONFIG_PATH": "./__test__/tsconfig.json"
     },
-    "timeout": "1m"
+    "nodeArguments": [
+      "--import",
+      "@oxc-node/core/register"
+    ]
   },
   "prettier": {
     "printWidth": 120,
@@ -121,5 +123,5 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "yarn@4.5.0"
+  "packageManager": "yarn@4.12.0"
 }
